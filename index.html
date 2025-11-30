@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Presupuestos Cartelería</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-light: #dbeafe;
+      --bg: #f4f4f5;
+      --card: #ffffff;
+      --border: #e4e4e7;
+      --text: #111827;
+      --muted: #6b7280;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 1.5rem;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: var(--card);
+      border-radius: 1rem;
+      padding: 1.5rem 2rem 2.5rem;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+
+    header small {
+      color: var(--muted);
+    }
+
+    .firma {
+      text-align: right;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      margin: 1.2rem 0 0.8rem;
+    }
+
+    section {
+      margin-bottom: 1.2rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 0.75rem 1rem;
+    }
+
+    label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 0.15rem;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.45rem 0.6rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    th, td {
+      padding: 0.45rem 0.35rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    th {
+      text-align: left;
+      background: #f9fafb;
+      font-weight: 600;
+    }
+
+    td:last-child, th:last-child {
+      text-align: center;
+    }
+
+    .small-input {
+      max-width: 90px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary-light);
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: #b91c1c;
+      border-radius: 999px;
+      border: none;
+    }
+
+    .btn-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+    }
+
+    .acciones {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .resumen {
+      margin-top: 0.75rem;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .resumen-inner {
+      width: 260px;
+      border-radius: 0.75rem;
+      border: 1px solid var(--border);
+      padding: 0.75rem 0.9rem;
+      background: #fafafa;
+      font-size: 0.85rem;
+    }
+
+    .resumen-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.25rem;
+    }
+
+    .resumen-row.total {
+      font-weight: 700;
+      border-top: 1px dashed var(--border);
+      padding-top: 0.35rem;
+      margin-top: 0.25rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.75rem;
+      margin-left: 0.4rem;
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+
+      .container {
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
+      }
+    }
+
+    .config-materiales {
+      border-radius: 0.75rem;
+      border: 1px dashed var(--border);
+      padding: 0.75rem 0.9rem;
+      background: #f9fafb;
+    }
+
+    .config-materiales-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .config-materiales small {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .material-row input {
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="presupuestoRoot">
+    <header>
+      <div>
+        <h1>Presupuesto de Cartelería</h1>
+        <small>Generador rápido de presupuestos para tu firma de cartelería</small>
+      </div>
+      <div class="firma">
+        <strong>Nombre de la firma:</strong><br>
+        <input type="text" id="firmaNombre" placeholder="Ej: GH Carteles" style="text-align:right;">
+      </div>
+    </header>
+
+    <section>
+      <h2>Datos del cliente</h2>
+      <div class="grid-2">
+        <div>
+          <label>Cliente</label>
+          <input type="text" id="clienteNombre" placeholder="Nombre del cliente">
+        </div>
+        <div>
+          <label>Fecha</label>
+          <input type="date" id="fechaPresupuesto">
+        </div>
+        <div>
+          <label>Teléfono / WhatsApp</label>
+          <input type="text" id="clienteTelefono" placeholder="+54 9 ...">
+        </div>
+        <div>
+          <label>Email</label>
+          <input type="text" id="clienteEmail" placeholder="cliente@mail.com">
+        </div>
+      </div>
+    </section>
+
+    <section class="config-materiales">
+      <div class="config-materiales-header">
+        <h2>Valores de materiales <span class="badge">Config</span></h2>
+        <small>Completá los valores por unidad. Luego podés seleccionarlos en las líneas del presupuesto.</small>
+      </div>
+
+      <table id="tablaMateriales">
+        <thead>
+          <tr>
+            <th>Material</th>
+            <th>Unidad</th>
+            <th>Precio por unidad ($)</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="materialesBody"></tbody>
+      </table>
+
+      <div style="margin-top:0.5rem; display:flex; flex-wrap:wrap; gap:0.5rem; align-items:flex-end;">
+        <div style="flex:1; min-width:140px;">
+          <label>Nuevo material</label>
+          <input type="text" id="nuevoMaterialNombre" placeholder="Ej: Lona front 13 oz">
+        </div>
+        <div style="width:110px;">
+          <label>Unidad</label>
+          <input type="text" id="nuevoMaterialUnidad" placeholder="m²">
+        </div>
+        <div style="width:130px;">
+          <label>Precio ($)</label>
+          <input type="number" id="nuevoMaterialPrecio" min="0" step="0.01" placeholder="1200">
+        </div>
+        <button type="button" class="btn btn-outline" id="btnAgregarMaterial">+ Agregar material</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Detalle del presupuesto</h2>
+      <div style="margin-bottom:0.5rem; display:flex; justify-content:space-between; align-items:center;">
+        <small>Usá los materiales configurados o editá el precio manualmente por ítem.</small>
+        <button type="button" class="btn btn-outline" id="btnAgregarLinea">+ Agregar ítem</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width:25%;">Descripción</th>
+            <th style="width:18%;">Material</th>
+            <th style="width:10%;">Cant.</th>
+            <th style="width:15%;">Precio unit. ($)</th>
+            <th style="width:15%;">Subtotal ($)</th>
+            <th style="width:8%;">Eliminar</th>
+          </tr>
+        </thead>
+        <tbody id="lineasBody"></tbody>
+      </table>
+
+      <div class="resumen">
+        <div class="resumen-inner">
+          <div class="resumen-row">
+            <span>Subtotal</span>
+            <span id="subtotal">$0,00</span>
+          </div>
+          <div class="resumen-row">
+            <span>IVA (%)</span>
+            <span>
+              <input type="number" id="ivaPorcentaje" value="21" min="0" step="0.1" class="small-input" style="text-align:right;">
+            </span>
+          </div>
+          <div class="resumen-row">
+            <span>IVA ($)</span>
+            <span id="ivaMonto">$0,00</span>
+          </div>
+          <div class="resumen-row total">
+            <span>Total</span>
+            <span id="total">$0,00</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Notas / Condiciones</h2>
+      <textarea id="notas" placeholder="Ej: Validez del presupuesto, forma de pago, plazos de entrega, etc."></textarea>
+    </section>
+
+    <section class="acciones">
+      <button type="button" class="btn btn-outline" id="btnLimpiar">Limpiar todo</button>
+      <button type="button" class="btn btn-primary" id="btnPDF">Exportar a PDF</button>
+    </section>
+  </div>
+
+  <script>
+    const STORAGE_MATERIALES_KEY = "presupuestos_carteleria_materiales";
+
+    function cargarMaterialesIniciales() {
+      const guardados = localStorage.getItem(STORAGE_MATERIALES_KEY);
+      if (guardados) return JSON.parse(guardados);
+      return [
+        { nombre: "Lona front 13 oz", unidad: "m²", precio: 1200 },
+        { nombre: "Vinilo impreso", unidad: "m²", precio: 1800 },
+        { nombre: "Acrílico 3mm", unidad: "m²", precio: 4500 }
+      ];
+    }
+
+    let materiales = cargarMaterialesIniciales();
+
+    function guardarMateriales() {
+      localStorage.setItem(STORAGE_MATERIALES_KEY, JSON.stringify(materiales));
+    }
+
+    function formatearMoneda(valor) {
+      const n = Number(valor) || 0;
+      return n.toLocaleString("es-AR", {
+        style: "currency",
+        currency: "ARS",
+        minimumFractionDigits: 2
+      });
+    }
+
+    function renderMaterialesTabla() {
+      const tbody = document.getElementById("materialesBody");
+      tbody.innerHTML = "";
+      materiales.forEach((mat, index) => {
+        const tr = document.createElement("tr");
+        tr.classList.add("material-row");
+        tr.innerHTML = `
+          <td><input type="text" value="${mat.nombre}" data-index="${index}" data-field="nombre"></td>
+          <td style="width:80px;"><input type="text" class="small-input" value="${mat.unidad}" data-index="${index}" data-field="unidad"></td>
+          <td style="width:110px;"><input type="number" class="small-input" min="0" step="0.01" value="${mat.precio}" data-index="${index}" data-field="precio"></td>
+          <td><button type="button" class="btn btn-danger btn-sm" data-eliminar-material="${index}">×</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function actualizarSelectsMateriales() {
+      const selects = document.querySelectorAll(".select-material");
+      selects.forEach(select => {
+        const valorSeleccionado = select.value;
+        select.innerHTML = "";
+        const optionVacia = document.createElement("option");
+        optionVacia.value = "";
+        optionVacia.textContent = "Seleccionar…";
+        select.appendChild(optionVacia);
+
+        materiales.forEach((mat, index) => {
+          const opt = document.createElement("option");
+          opt.value = index;
+          opt.textContent = mat.nombre;
+          select.appendChild(opt);
+        });
+
+        if (valorSeleccionado !== "") select.value = valorSeleccionado;
+      });
+    }
+
+    function agregarLinea() {
+      const tbody = document.getElementById("lineasBody");
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td><input type="text" class="desc-input" placeholder="Ej: Cartel lona 2x1 m"></td>
+        <td>
+          <select class="select-material">
+            <option value="">Seleccionar…</option>
+            ${materiales.map((m, i) => `<option value="${i}">${m.nombre}</option>`).join("")}
+          </select>
+        </td>
+        <td><input type="number" class="small-input input-cant" min="0" step="0.01" value="1"></td>
+        <td><input type="number" class="small-input input-precio" min="0" step="0.01" value="0"></td>
+        <td class="subtotal-linea">$0,00</td>
+        <td><button type="button" class="btn btn-danger btn-sm btnEliminarLinea">×</button></td>
+      `;
+
+      tbody.appendChild(tr);
+
+      const selectMaterial = tr.querySelector(".select-material");
+      const inputCant = tr.querySelector(".input-cant");
+      const inputPrecio = tr.querySelector(".input-precio");
+
+      selectMaterial.addEventListener("change", () => {
+        const index = selectMaterial.value;
+        if (index !== "") {
+          const mat = materiales[index];
+          inputPrecio.value = mat.precio;
+        }
+        recalcularLinea(tr);
+        recalcularTotales();
+      });
+
+      [inputCant, inputPrecio].forEach(input => {
+        input.addEventListener("input", () => {
+          recalcularLinea(tr);
+          recalcularTotales();
+        });
+      });
+
+      const btnEliminar = tr.querySelector(".btnEliminarLinea");
+      btnEliminar.addEventListener("click", () => {
+        tr.remove();
+        recalcularTotales();
+      });
+
+      recalcularLinea(tr);
+      recalcularTotales();
+    }
+
+    function recalcularLinea(tr) {
+      const cant = parseFloat(tr.querySelector(".input-cant").value) || 0;
+      const precio = parseFloat(tr.querySelector(".input-precio").value) || 0;
+      const subtotal = cant * precio;
+      tr.querySelector(".subtotal-linea").textContent = formatearMoneda(subtotal);
+    }
+
+    function recalcularTotales() {
+      const lineas = document.querySelectorAll("#lineasBody tr");
+      let subtotal = 0;
+      lineas.forEach(tr => {
+        const cant = parseFloat(tr.querySelector(".input-cant").value) || 0;
+        const precio = parseFloat(tr.querySelector(".input-precio").value) || 0;
+        subtotal += cant * precio;
+      });
+
+      const ivaPorc = parseFloat(document.getElementById("ivaPorcentaje").value) || 0;
+      const ivaMonto = subtotal * ivaPorc / 100;
+      const total = subtotal + ivaMonto;
+
+      document.getElementById("subtotal").textContent = formatearMoneda(subtotal);
+      document.getElementById("ivaMonto").textContent = formatearMoneda(ivaMonto);
+      document.getElementById("total").textContent = formatearMoneda(total);
+    }
+
+    function generarPDF() {
+      recalcularTotales();
+
+      const firma = document.getElementById("firmaNombre").value || "";
+      const cliente = document.getElementById("clienteNombre").value || "";
+      const fecha = document.getElementById("fechaPresupuesto").value || "";
+      const tel = document.getElementById("clienteTelefono").value || "";
+      const mail = document.getElementById("clienteEmail").value || "";
+      const notasRaw = document.getElementById("notas").value || "";
+      const notas = notasRaw.replace(/\n/g, "<br>");
+
+      const subtotalTxt = document.getElementById("subtotal").textContent;
+      const ivaPorc = document.getElementById("ivaPorcentaje").value || "0";
+      const ivaMontoTxt = document.getElementById("ivaMonto").textContent;
+      const totalTxt = document.getElementById("total").textContent;
+
+      const lineas = document.querySelectorAll("#lineasBody tr");
+      let filasHTML = "";
+      lineas.forEach(tr => {
+        const desc = tr.querySelector(".desc-input").value.trim();
+        const select = tr.querySelector(".select-material");
+        const materialIdx = select.value;
+        const materialNombre = materialIdx !== "" ? materiales[materialIdx].nombre : "";
+        const cant = parseFloat(tr.querySelector(".input-cant").value) || 0;
+        const precio = parseFloat(tr.querySelector(".input-precio").value) || 0;
+
+        if (!desc && cant === 0 && precio === 0) return;
+
+        const subtotal = cant * precio;
+
+        filasHTML += `
+          <tr>
+            <td>${desc || ""}</td>
+            <td>${materialNombre || ""}</td>
+            <td class="num">${cant}</td>
+            <td class="num">${formatearMoneda(precio)}</td>
+            <td class="num">${formatearMoneda(subtotal)}</td>
+          </tr>
+        `;
+      });
+
+      const html = `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Presupuesto - ${cliente ? cliente : "Sin cliente"}</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 20mm;
+      font-size: 11pt;
+      color: #111827;
+    }
+    .hoja {
+      width: 100%;
+      max-width: 190mm;
+      margin: 0 auto;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12mm;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 6mm;
+    }
+    .firma {
+      font-size: 11pt;
+      font-weight: 600;
+    }
+    .firma small {
+      font-weight: 400;
+      font-size: 9pt;
+      color: #6b7280;
+    }
+    .titulo {
+      text-align: right;
+      font-size: 18pt;
+      font-weight: 700;
+    }
+    h2 {
+      font-size: 11pt;
+      margin: 0 0 4pt;
+    }
+    .bloque {
+      margin-bottom: 10mm;
+    }
+    .fila-datos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10mm;
+      font-size: 9.5pt;
+    }
+    .fila-datos div {
+      min-width: 40mm;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9.5pt;
+      margin-top: 2mm;
+    }
+    th, td {
+      border: 1px solid #e5e7eb;
+      padding: 4px 6px;
+      vertical-align: top;
+    }
+    th {
+      background: #f9fafb;
+      text-align: left;
+    }
+    td.num, th.num {
+      text-align: right;
+      white-space: nowrap;
+    }
+    .resumen {
+      margin-top: 6mm;
+      margin-left: auto;
+      width: 60mm;
+      font-size: 9.5pt;
+    }
+    .resumen-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 2px;
+    }
+    .resumen-row.total {
+      border-top: 1px solid #e5e7eb;
+      margin-top: 3px;
+      padding-top: 3px;
+      font-weight: 700;
+    }
+    .notas {
+      font-size: 9.5pt;
+      margin-top: 6mm;
+      border-top: 1px dashed #e5e7eb;
+      padding-top: 4mm;
+      white-space: pre-wrap;
+    }
+    @page {
+      size: A4;
+      margin: 10mm 15mm;
+    }
+  </style>
+</head>
+<body>
+  <div class="hoja">
+    <header>
+      <div class="firma">
+        ${firma || "Nombre de la firma"}<br>
+        <small>Presupuesto de cartelería</small>
+      </div>
+      <div class="titulo">PRESUPUESTO</div>
+    </header>
+
+    <section class="bloque">
+      <h2>Datos del cliente</h2>
+      <div class="fila-datos">
+        <div><strong>Cliente:</strong><br>${cliente || "-"}</div>
+        <div><strong>Fecha:</strong><br>${fecha || "-"}</div>
+        <div><strong>Teléfono:</strong><br>${tel || "-"}</div>
+        <div><strong>Email:</strong><br>${mail || "-"}</div>
+      </div>
+    </section>
+
+    <section class="bloque">
+      <h2>Detalle</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Descripción</th>
+            <th>Material</th>
+            <th class="num">Cant.</th>
+            <th class="num">Precio unit.</th>
+            <th class="num">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filasHTML || `<tr><td colspan="5">Sin ítems cargados</td></tr>`}
+        </tbody>
+      </table>
+
+      <div class="resumen">
+        <div class="resumen-row">
+          <span>Subtotal</span>
+          <span>${subtotalTxt}</span>
+        </div>
+        <div class="resumen-row">
+          <span>IVA (${ivaPorc}%)</span>
+          <span>${ivaMontoTxt}</span>
+        </div>
+        <div class="resumen-row total">
+          <span>Total</span>
+          <span>${totalTxt}</span>
+        </div>
+      </div>
+    </section>
+
+    ${notas ? `<section class="notas"><h2>Notas / condiciones</h2><div>${notas}</div></section>` : ""}
+  </div>
+
+  <script>
+    window.onload = function() { window.print(); };
+  <\/script>
+</body>
+</html>
+      `;
+
+      const vent = window.open("", "_blank");
+      vent.document.open();
+      vent.document.write(html);
+      vent.document.close();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const hoy = new Date().toISOString().slice(0, 10);
+      document.getElementById("fechaPresupuesto").value = hoy;
+
+      renderMaterialesTabla();
+
+      document.getElementById("materialesBody").addEventListener("input", (e) => {
+        const input = e.target;
+        const index = input.dataset.index;
+        const field = input.dataset.field;
+        if (index !== undefined && field) {
+          materiales[index][field] = field === "precio" ? parseFloat(input.value) || 0 : input.value;
+          guardarMateriales();
+          actualizarSelectsMateriales();
+        }
+      });
+
+      document.getElementById("materialesBody").addEventListener("click", (e) => {
+        const btnIndex = e.target.getAttribute("data-eliminar-material");
+        if (btnIndex !== null) {
+          materiales.splice(btnIndex, 1);
+          guardarMateriales();
+          renderMaterialesTabla();
+          actualizarSelectsMateriales();
+        }
+      });
+
+      document.getElementById("btnAgregarMaterial").addEventListener("click", () => {
+        const nombre = document.getElementById("nuevoMaterialNombre").value.trim();
+        const unidad = document.getElementById("nuevoMaterialUnidad").value.trim() || "m²";
+        const precio = parseFloat(document.getElementById("nuevoMaterialPrecio").value) || 0;
+        if (!nombre) return alert("Ingresá un nombre de material.");
+        materiales.push({ nombre, unidad, precio });
+        guardarMateriales();
+        renderMaterialesTabla();
+        actualizarSelectsMateriales();
+        document.getElementById("nuevoMaterialNombre").value = "";
+        document.getElementById("nuevoMaterialUnidad").value = "";
+        document.getElementById("nuevoMaterialPrecio").value = "";
+      });
+
+      document.getElementById("btnAgregarLinea").addEventListener("click", agregarLinea);
+
+      document.getElementById("ivaPorcentaje").addEventListener("input", recalcularTotales);
+
+      document.getElementById("btnLimpiar").addEventListener("click", () => {
+        if (!confirm("¿Seguro que querés limpiar todas las líneas del presupuesto?")) return;
+        document.getElementById("lineasBody").innerHTML = "";
+        recalcularTotales();
+      });
+
+      document.getElementById("btnPDF").addEventListener("click", generarPDF);
+
+      agregarLinea();
+    });
+  </script>
+</body>
+</html>
