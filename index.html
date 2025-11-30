@@ -149,6 +149,11 @@
       border: 1px solid var(--primary-light);
     }
 
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
     .btn-danger {
       background: #fee2e2;
       color: #b91c1c;
@@ -163,9 +168,17 @@
 
     .acciones {
       display: flex;
+      flex-wrap: wrap;
       justify-content: flex-end;
       gap: 0.5rem;
       margin-top: 1rem;
+    }
+
+    .acciones-left {
+      margin-right: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
 
     .resumen {
@@ -240,6 +253,10 @@
 
     .material-row input {
       font-size: 0.8rem;
+    }
+
+    #fileJson {
+      display: none;
     }
   </style>
 </head>
@@ -364,6 +381,11 @@
     </section>
 
     <section class="acciones">
+      <div class="acciones-left">
+        <button type="button" class="btn btn-secondary" id="btnExportarJson">Guardar datos (.json)</button>
+        <button type="button" class="btn btn-secondary" id="btnImportarJson">Cargar datos (.json)</button>
+        <input type="file" id="fileJson" accept="application/json">
+      </div>
       <button type="button" class="btn btn-outline" id="btnLimpiar">Limpiar todo</button>
       <button type="button" class="btn btn-primary" id="btnPDF">Exportar a PDF</button>
     </section>
@@ -434,7 +456,7 @@
       });
     }
 
-    function agregarLinea() {
+    function agregarLinea(desdeEstado) {
       const tbody = document.getElementById("lineasBody");
       const tr = document.createElement("tr");
 
@@ -457,6 +479,16 @@
       const selectMaterial = tr.querySelector(".select-material");
       const inputCant = tr.querySelector(".input-cant");
       const inputPrecio = tr.querySelector(".input-precio");
+      const descInput = tr.querySelector(".desc-input");
+
+      if (desdeEstado) {
+        descInput.value = desdeEstado.descripcion || "";
+        if (typeof desdeEstado.materialIndex === "number") {
+          selectMaterial.value = String(desdeEstado.materialIndex);
+        }
+        inputCant.value = desdeEstado.cantidad ?? 1;
+        inputPrecio.value = desdeEstado.precioUnitario ?? 0;
+      }
 
       selectMaterial.addEventListener("change", () => {
         const index = selectMaterial.value;
@@ -510,6 +542,97 @@
       document.getElementById("total").textContent = formatearMoneda(total);
     }
 
+    // ----- JSON EXPORT/IMPORT -----
+    function obtenerEstado() {
+      const lineas = [];
+      document.querySelectorAll("#lineasBody tr").forEach(tr => {
+        const desc = tr.querySelector(".desc-input").value.trim();
+        const select = tr.querySelector(".select-material");
+        const materialIdx = select.value === "" ? null : Number(select.value);
+        const cant = parseFloat(tr.querySelector(".input-cant").value) || 0;
+        const precio = parseFloat(tr.querySelector(".input-precio").value) || 0;
+
+        if (!desc && cant === 0 && precio === 0 && materialIdx === null) return;
+
+        lineas.push({
+          descripcion: desc,
+          materialIndex: materialIdx,
+          cantidad: cant,
+          precioUnitario: precio
+        });
+      });
+
+      return {
+        version: 1,
+        firmaNombre: document.getElementById("firmaNombre").value || "",
+        clienteNombre: document.getElementById("clienteNombre").value || "",
+        fechaPresupuesto: document.getElementById("fechaPresupuesto").value || "",
+        clienteTelefono: document.getElementById("clienteTelefono").value || "",
+        clienteEmail: document.getElementById("clienteEmail").value || "",
+        notas: document.getElementById("notas").value || "",
+        ivaPorcentaje: parseFloat(document.getElementById("ivaPorcentaje").value) || 0,
+        materiales: materiales,
+        lineas: lineas
+      };
+    }
+
+    function aplicarEstado(estado) {
+      try {
+        materiales = Array.isArray(estado.materiales) ? estado.materiales : materiales;
+        guardarMateriales();
+        renderMaterialesTabla();
+        actualizarSelectsMateriales();
+
+        document.getElementById("firmaNombre").value = estado.firmaNombre || "";
+        document.getElementById("clienteNombre").value = estado.clienteNombre || "";
+        document.getElementById("fechaPresupuesto").value = estado.fechaPresupuesto || "";
+        document.getElementById("clienteTelefono").value = estado.clienteTelefono || "";
+        document.getElementById("clienteEmail").value = estado.clienteEmail || "";
+        document.getElementById("notas").value = estado.notas || "";
+        document.getElementById("ivaPorcentaje").value = estado.ivaPorcentaje ?? 21;
+
+        const tbody = document.getElementById("lineasBody");
+        tbody.innerHTML = "";
+        if (Array.isArray(estado.lineas) && estado.lineas.length > 0) {
+          estado.lineas.forEach(l => agregarLinea(l));
+        } else {
+          agregarLinea();
+        }
+        recalcularTotales();
+      } catch (err) {
+        alert("Error al aplicar los datos del archivo.");
+        console.error(err);
+      }
+    }
+
+    function exportarJSON() {
+      const estado = obtenerEstado();
+      const blob = new Blob([JSON.stringify(estado, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const nombreCliente = estado.clienteNombre ? estado.clienteNombre.replace(/[^a-z0-9-_]/gi, "_") : "presupuesto";
+      a.href = url;
+      a.download = nombreCliente + "_carteleria.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function importarJSON(archivo) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          aplicarEstado(data);
+        } catch (err) {
+          alert("El archivo no es un JSON válido.");
+        }
+      };
+      reader.readAsText(archivo, "utf-8");
+    }
+
+    // ----- PDF limpio -----
     function generarPDF() {
       recalcularTotales();
 
@@ -564,7 +687,7 @@
     }
     body {
       margin: 0;
-      padding: 20mm;
+      padding: 10mm 8mm;
       font-size: 11pt;
       color: #111827;
     }
@@ -577,9 +700,9 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 12mm;
+      margin-bottom: 10mm;
       border-bottom: 1px solid #e5e7eb;
-      padding-bottom: 6mm;
+      padding-bottom: 5mm;
     }
     .firma {
       font-size: 11pt;
@@ -600,12 +723,12 @@
       margin: 0 0 4pt;
     }
     .bloque {
-      margin-bottom: 10mm;
+      margin-bottom: 8mm;
     }
     .fila-datos {
       display: flex;
       flex-wrap: wrap;
-      gap: 10mm;
+      gap: 8mm;
       font-size: 9.5pt;
     }
     .fila-datos div {
@@ -631,7 +754,7 @@
       white-space: nowrap;
     }
     .resumen {
-      margin-top: 6mm;
+      margin-top: 5mm;
       margin-left: auto;
       width: 60mm;
       font-size: 9.5pt;
@@ -649,14 +772,14 @@
     }
     .notas {
       font-size: 9.5pt;
-      margin-top: 6mm;
+      margin-top: 5mm;
       border-top: 1px dashed #e5e7eb;
       padding-top: 4mm;
       white-space: pre-wrap;
     }
     @page {
       size: A4;
-      margin: 10mm 15mm;
+      margin: 5mm 5mm;
     }
   </style>
 </head>
@@ -770,7 +893,7 @@
         document.getElementById("nuevoMaterialPrecio").value = "";
       });
 
-      document.getElementById("btnAgregarLinea").addEventListener("click", agregarLinea);
+      document.getElementById("btnAgregarLinea").addEventListener("click", () => agregarLinea());
 
       document.getElementById("ivaPorcentaje").addEventListener("input", recalcularTotales);
 
@@ -781,6 +904,20 @@
       });
 
       document.getElementById("btnPDF").addEventListener("click", generarPDF);
+
+      document.getElementById("btnExportarJson").addEventListener("click", exportarJSON);
+
+      document.getElementById("btnImportarJson").addEventListener("click", () => {
+        document.getElementById("fileJson").click();
+      });
+
+      document.getElementById("fileJson").addEventListener("change", (e) => {
+        const archivo = e.target.files[0];
+        if (archivo) {
+          importarJSON(archivo);
+          e.target.value = "";
+        }
+      });
 
       agregarLinea();
     });
